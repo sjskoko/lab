@@ -1,0 +1,25 @@
+import assert from 'node:assert/strict';
+import vm from 'node:vm';
+import {readFileSync} from 'node:fs';
+import {spawnSync} from 'node:child_process';
+import {dayKey,validateVisit,handle,chart,SQL} from '../worker.mjs';
+assert.equal(dayKey(new Date('2026-10-15T15:00:00Z')),'2026-10-16');
+assert.equal(dayKey(new Date('2026-10-15T14:59:59Z')),'2026-10-15');
+const req=()=>new Request('https://stats.example/api/collect',{method:'POST',headers:{origin:'https://sjskoko.github.io','content-type':'application/json'}});
+assert(validateVisit(req(),{page:'orbit'}));
+assert(!validateVisit(req(),{page:'orbit',email:'private@example.com'}));
+assert(!validateVisit(req(),{page:'__proto__'}));
+assert(!validateVisit(new Request('https://stats.example',{headers:{origin:'https://evil.example'}}),{page:'orbit'}));
+const bad=await handle(new Request('https://stats.example/api/collect',{method:'POST',headers:{origin:'https://evil.example'}}),{});assert.equal(bad.status,403);
+const tooLarge=await handle(new Request('https://stats.example/api/collect',{method:'POST',headers:{origin:'https://sjskoko.github.io','content-type':'application/json'},body:'a'.repeat(150)}),{});assert.equal(tooLarge.status,413);
+const code=readFileSync(new URL('../client.js',import.meta.url),'utf8');
+function client(overrides={}){const calls=[],events={};const context={window:{LabAnalyticsConfig:{endpoint:'https://stats.example/api/collect'}},navigator:{},location:{protocol:'https:',hostname:'sjskoko.github.io',pathname:'/orbit-fourier-studio/',search:'?email=private@example.com'},document:{visibilityState:'visible',addEventListener:(n,f)=>events[n]=f,removeEventListener:n=>delete events[n]},localStorage:{getItem:()=>null},URL,fetch:(...args)=>{calls.push(args);return Promise.resolve()},...overrides};vm.runInNewContext(code,context);return {calls,events,context};}
+let c=client();assert.equal(c.calls.length,1);assert.deepEqual(JSON.parse(c.calls[0][1].body),{page:'orbit'});assert.equal(c.calls[0][1].referrerPolicy,'no-referrer');assert(!c.calls[0][1].body.includes('private'));
+assert.equal(client({navigator:{doNotTrack:'1'}}).calls.length,0);assert.equal(client({navigator:{globalPrivacyControl:true}}).calls.length,0);
+assert.equal(client({localStorage:{getItem:()=> '1'}}).calls.length,0);assert.equal(client({window:{LabAnalyticsConfig:{endpoint:''}}}).calls.length,0);
+assert.equal(client({location:{protocol:'file:',hostname:'',pathname:'/orbit-studio.html'}}).calls.length,0);
+let delayed=client({document:{visibilityState:'hidden',addEventListener:(n,f)=>{},removeEventListener:()=>{}}});assert.equal(delayed.calls.length,0);
+const fixture={site:'orbit',daily:Array.from({length:30},(_,i)=>({day:'2026-10-'+String(i+1).padStart(2,'0'),views:0,orbit:0,story:0,lab:0})),pages:[{id:'orbit',label:'Orbit Studio'}],total:0,last30Days:0,today:0,generatedAt:'2026-10-15T16:00:00Z'};
+assert(chart(fixture).includes('Awaiting the first counted page view'));assert(!chart(fixture).includes('NaN'));
+const sqlTest=spawnSync('python3',['-c',`import sqlite3,sys\nc=sqlite3.connect(':memory:')\nc.executescript(sys.stdin.readline())\nq=sys.stdin.read()\nfor i in range(605): c.execute(q,('2026-10-15T16:00','2026-10-16','orbit'))\nassert c.execute('SELECT views FROM page_views').fetchone()[0]==600\nc.execute(q,('2026-10-15T16:01','2026-10-16','orbit'))\nassert c.execute('SELECT SUM(views) FROM page_views').fetchone()[0]==601\nprint('SQLite aggregation and burst cap passed')`],{input:readFileSync(new URL('../migrations/0001_page_views.sql',import.meta.url),'utf8').replaceAll('\n',' ')+'\n'+SQL,encoding:'utf8'});assert.equal(sqlTest.status,0,sqlTest.stderr);
+console.log('PASS: KST day boundaries, allowed origins/pages, payload limits, privacy headers, disabled/unconfigured/offline clients, DNT/GPC/opt-out, empty SVG and SQLite atomic counters.');

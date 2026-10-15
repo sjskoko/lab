@@ -1,0 +1,12 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path');
+const args=process.argv.slice(2),get=k=>args[args.indexOf(k)+1];
+for(const k of ['--project','--origin','--root'])if(!args.includes(k)||!get(k)||get(k).startsWith('--'))throw Error('Usage: node configure.cjs --project orbit|lab --origin https://DEPLOYED-HOST --root /project');
+const project=get('--project');if(!['orbit','lab'].includes(project))throw Error('Project must be orbit or lab');
+const origin=new URL(get('--origin'));if(origin.protocol!=='https:'||origin.username||origin.password||origin.search||origin.hash||origin.pathname!=='/')throw Error('Use the HTTPS origin of the deployed collector, with no credentials, query, fragment or path');
+const root=path.resolve(get('--root')),readme=path.join(root,'README.md'),text=fs.readFileSync(readme,'utf8');
+if(!text.includes('<!-- LIVE-TRAFFIC:START -->')||!text.includes('<!-- LIVE-TRAFFIC:END -->'))throw Error('README traffic markers missing');
+const block=`<!-- LIVE-TRAFFIC:START -->\n[![Daily GitHub Pages views](${origin.origin}/chart.svg?site=${project})](${origin.origin}/?site=${project})\n\nMeasured page views, not unique visitors. Counts begin at activation. The live dashboard refreshes every 15 seconds; GitHub image caching may delay README updates.\n<!-- LIVE-TRAFFIC:END -->`;
+fs.writeFileSync(path.join(root,'dist/analytics-config.js'),'// Public collector endpoint; never put API secrets here.\nwindow.LabAnalyticsConfig = '+JSON.stringify({endpoint:origin.origin+'/api/collect'})+';\n');
+fs.writeFileSync(readme,text.replace(/<!-- LIVE-TRAFFIC:START -->[\s\S]*?<!-- LIVE-TRAFFIC:END -->/,block));
+console.log('Collector and README graph configured. Rebuild, deploy, and verify a real page load before claiming active tracking.');

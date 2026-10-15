@@ -52,5 +52,13 @@ Edit `template.html`, `dist/style.css`, or `projects.json`, then rebuild. `dist/
 - Mobile-first layout with large demo links, a repository Star link, and optional story links.
 - Static HTML cards work without JavaScript. The optional Share button uses native sharing or copies the collection URL, with a selectable-text fallback.
 - System fonts, local SVG artwork, keyboard focus states, and reduced-motion support.
-- No analytics, cookies, external fonts, GitHub API calls, or personal contact details in the page. The GitHub account handle is visible in the hosting and repository URLs. Hosting providers still receive ordinary page requests.
+- No cookies, external fonts, GitHub API calls, or personal contact details in the page. Optional aggregate page-view analytics have an opt-out page; see the traffic section for activation status. The GitHub account handle is visible in the hosting and repository URLs. Hosting providers still receive ordinary page requests.
 - This is an independent link hub, not an account on Linktree.
+
+## GitHub Pages traffic
+
+<!-- LIVE-TRAFFIC:START -->
+![Traffic tracking setup status](assets/traffic-status.svg)
+
+**Not active yet:** collector registration is blocked by a hosting-service error. The endpoint is deliberately empty. [Implementation and activation instructions](https://github.com/sjskoko/lab/tree/main/analytics).
+<!-- LIVE-TRAFFIC:END -->

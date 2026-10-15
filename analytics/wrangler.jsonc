@@ -1,0 +1,11 @@
+{
+  "name": "interactive-lab-traffic",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-10-15",
+  "d1_databases": [{
+    "binding": "DB",
+    "database_name": "interactive-lab-traffic",
+    "database_id": "REPLACE_WITH_CREATED_DATABASE_ID",
+    "migrations_dir": "migrations"
+  }]
+}
