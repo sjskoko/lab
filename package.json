@@ -1,0 +1,1 @@
+{"name":"interactive-lab","version":"1.0.0","private":true,"description":"A mobile-first link hub for live web experiments","scripts":{"build":"node scripts/build.cjs"},"engines":{"node":">=20"}}

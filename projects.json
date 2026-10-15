@@ -1,0 +1,14 @@
+[
+  {
+    "id": "orbit",
+    "title": "Orbit",
+    "subtitle": "Fourier Pattern Studio",
+    "description": "Turn your drawings and images into moving mathematics. Explore 24 shapes, fine-tune the circles, and export your own video.",
+    "tags": ["Creative coding", "Interactive", "Video export"],
+    "demo": "https://sjskoko.github.io/orbit-fourier-studio/",
+    "repository": "https://github.com/sjskoko/orbit-fourier-studio",
+    "story": "https://sjskoko.github.io/orbit-fourier-studio/story/",
+    "image": "orbit.svg",
+    "imageAlt": "A coral rose curve traced by a chain of mint orbiting circles"
+  }
+]
