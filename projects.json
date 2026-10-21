@@ -4,11 +4,31 @@
     "title": "Orbit",
     "subtitle": "Fourier Pattern Studio",
     "description": "Turn your drawings and images into moving mathematics. Explore 24 shapes, fine-tune the circles, and export your own video.",
-    "tags": ["Creative coding", "Interactive", "Video export"],
+    "tags": [
+      "Creative coding",
+      "Interactive",
+      "Video export"
+    ],
     "demo": "https://sjskoko.github.io/orbit-fourier-studio/",
     "repository": "https://github.com/sjskoko/orbit-fourier-studio",
     "story": "https://sjskoko.github.io/orbit-fourier-studio/story/",
     "image": "orbit.svg",
     "imageAlt": "A coral rose curve traced by a chain of mint orbiting circles"
+  },
+  {
+    "id": "cellarium",
+    "title": "Cellarium",
+    "subtitle": "Cellular Automata Playground",
+    "description": "Shape local rules and explore living patterns. Try binary cells, elemental worlds and Lenia in 2D or 3D, then pause and explore time.",
+    "tags": [
+      "Cellular automata",
+      "Lenia",
+      "2D / 3D"
+    ],
+    "demo": "https://sjskoko.github.io/cellarium-studio/",
+    "repository": "https://github.com/sjskoko/cellarium-studio",
+    "story": "https://sjskoko.github.io/cellarium-studio/story/",
+    "image": "cellarium.png",
+    "imageAlt": "A blue and mint Lenia Orbium organism on a dark cellular field"
   }
 ]
